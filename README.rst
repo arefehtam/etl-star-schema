@@ -32,10 +32,9 @@ First, install all needed requirement:
     pip3 install -r requirements_dev.txt
 Check `config.ini` for database is correct
 csv files is accessible from project root path(default is in `data`)
+Run `application.py` to see end-to-end process
 
 
-
-* TODO
 
 Credits
 -------

@@ -62,22 +62,23 @@ def transfer_data(config_object):
 
     # transfer product
     from_to(cursor_oltp, cursor_dwh, product_table_transfer, dim_product_table_insert)
-    print("Transfered dimension: product table")
+    print("Transfered dimension: product table\n" + dim_product_table_insert)
 
     # transfer product_location
     from_to(cursor_oltp, cursor_dwh, product_location_table_transfer, product_location_table_insert)
-    print("Transfered dimension: product_location table")
+    print("Transfered dimension: product_location table\n" + product_location_table_insert)
 
     # transfer customer_profile
     from_to(cursor_oltp, cursor_dwh, customer_table_transfer, dim_customer_profile_table_insert)
+    print("Transfered dimension: customer_profile table\n" + dim_customer_profile_table_insert)
 
     # transfer order date
     from_to(cursor_oltp, cursor_dwh, order_date_transfer, dim_order_date_table_insert)
-    print("Transfered dimension: order date table")
+    print("Transfered dimension: order_date table\n" + dim_order_date_table_insert)
 
     # transfer order
     from_to(cursor_oltp, cursor_dwh, order_table_transfer, fact_order_table_insert)
-    print("Transfered fact order table")
+    print("Transfered fact: order table\n" + fact_order_table_insert)
 
     conn_dwh.commit()
 
