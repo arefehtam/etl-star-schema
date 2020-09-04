@@ -47,6 +47,11 @@ CREATE TABLE IF NOT EXISTS dim_order_date (
     week int NOT NULL,
     year int NOT NULL
 );
+CREATE INDEX order_date_ind ON dim_order_date ((order_date::timestamptz));
+CREATE INDEX order_id_date_ind ON dim_order_date USING btree (order_id, ((order_date::timestamptz)) DESC);
+CREATE INDEX day_ind ON dim_order_date USING btree (day);
+CREATE INDEX month_ind ON dim_order_date USING btree (month);
+CREATE INDEX year_ind ON dim_order_date USING btree (year);
 """)
 
 fact_order_table_create = ("""
@@ -58,6 +63,7 @@ CREATE TABLE IF NOT EXISTS fact_order (
     city varchar,
     quantity int NOT NULL,
     unit_price float4 NOT NULL,
+    total_price float4 NOT NULL,
     date timestamptz NOT NULL,
     CONSTRAINT fact_order_pk PRIMARY KEY (order_id, product_id, customer_id)
 );
@@ -110,7 +116,8 @@ INSERT INTO fact_order (
     city,
     quantity,
     unit_price,
-    date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+    total_price,
+    date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
 """)
 
 

@@ -110,7 +110,7 @@ SELECT id, order_date,
 """)
 
 order_table_transfer = ("""
-SELECT o.order_id , o.product_id, oi.customer_id, oi.uniq_id, c.city, o.quantity , o.unit_price, oi.order_date AS order_date FROM order_line o
+SELECT o.order_id , o.product_id, oi.customer_id, oi.uniq_id, c.city, o.quantity , o.unit_price, (o.quantity * o.unit_price) AS total_price, oi.order_date AS order_date FROM order_line o
     INNER JOIN (
         SELECT id, customer_id, order_date, (
             WITH temp as (
