@@ -1,6 +1,5 @@
 import psycopg2
 from config_module import config
-from sql_queries.oltp import create_table_queries, drop_table_queries
 
 
 def create_database(config_object, key):
@@ -41,7 +40,7 @@ def create_database(config_object, key):
     return cur, conn
 
 
-def drop_tables(cur, conn):
+def drop_tables(cur, conn, drop_table_queries):
     """
     Drop each existing table from database.
     """
@@ -50,7 +49,7 @@ def drop_tables(cur, conn):
         conn.commit()
 
 
-def create_tables(cur, conn):
+def create_tables(cur, conn, create_table_queries):
     """
     Create tables for database.
     """
@@ -59,13 +58,24 @@ def create_tables(cur, conn):
         conn.commit()
 
 
-def main(config_object, key):
+def main(config_object, key, create_table_queries, drop_table_queries):
+    """
+    Create database and tables based on config given
+    Args:
+        - config_object: contains info of all databases
+        - key: a key to refer to specific database config
+        - drop_table_queries: list of sql queries for drop table
+        - create_table_queries: list of queries for create table
+
+     Returns:
+    None
+    """
     print("Creating {} database\n".format(key))
     cur, conn = create_database(config_object, key)
 
     print("Creating tables\n")
-    drop_tables(cur, conn)
-    create_tables(cur, conn)
+    drop_tables(cur, conn, drop_table_queries)
+    create_tables(cur, conn, create_table_queries)
 
     print("Done...\n")
     conn.close()
@@ -73,5 +83,7 @@ def main(config_object, key):
 
 if __name__ == "__main__":
     # get jdbc config from config file
+    from sql_queries.oltp import create_table_queries, drop_table_queries
+
     obj = config.resolve()
-    main(obj, "OLTP_DB")
+    main(obj, "OLTP_DB", create_table_queries, drop_table_queries)

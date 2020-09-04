@@ -23,15 +23,16 @@ etl-start-schema
     * Documentation: https://etl-start-schema.readthedocs.io.
 
 
-Features
---------
+Getting Started
+---------------
+This code is tested  on
+    * Postgresl  version: 10.6
+    * Python version: 3.7
+First, install all needed requirement:
+    pip3 install -r requirements_dev.txt
+Check `config.ini` for database is correct
+csv files is accessible from project root path(default is in `data`)
 
-Postgresl  version: 10.6
-python version: 3.7
-pip3 install -r requirements_dev.txt
-check `config.ini` for database and files
-csv files is accessible from project root path(default is in `data`). So create a folder in project root and copy csv files,
-also update config file
 
 
 * TODO

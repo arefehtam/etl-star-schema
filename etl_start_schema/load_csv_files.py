@@ -1,7 +1,6 @@
 import glob
 import os
 
-import numpy as np
 import pandas as pd
 import psycopg2
 from config_module import config
@@ -121,6 +120,14 @@ def load_data(cur, conn, dirpath):
 
 
 def main():
+    """
+   Load csv files to created tables of database.
+    Args:
+        - None
+
+     Returns:
+    None
+    """
     # get jdbc config from config file
     config_object = config.resolve()
     oltp = config_object["OLTP_DB"]
@@ -138,7 +145,7 @@ def main():
     cur = conn.cursor()
 
     # process order csv file
-    load_data(cur, conn, dirpath=os.path.abspath('../data'))
+    load_data(cur, conn, dirpath=os.path.abspath("../" + config_object["APP"]["data_folder"]))
 
     conn.close()
 

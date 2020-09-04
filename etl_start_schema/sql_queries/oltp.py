@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS product (
 
 customer_table_create = ("""
 CREATE TABLE IF NOT EXISTS customer (
-    uniq_id  int SERIAL, 
+    uniq_id  SERIAL, 
     id varchar NOT NULL,
     name varchar NOT NULL,
     address varchar,
@@ -91,27 +91,38 @@ SELECT id, name, available_quantity FROM (
 ) p
 """)
 
-product_location_transfer = ("""
-SELECT id, location_id FROM product
+product_location_table_transfer = ("""
+SELECT id, location_id, date FROM product
 """)
 
 customer_table_transfer = ("""
-SELECT id, name, address, city, date FROM customer 
+SELECT uniq_id, id, name, address, city, date FROM customer 
+""")
+
+order_date_transfer = ("""
+SELECT id, order_date, 
+ EXTRACT(hour FROM order_date::TIMESTAMP) AS hour, 
+ EXTRACT(day FROM order_date::TIMESTAMP) AS day,
+ EXTRACT(week FROM order_date::TIMESTAMP) AS week, 
+ EXTRACT(month FROM order_date::TIMESTAMP) AS month,
+ EXTRACT(year FROM order_date::TIMESTAMP) AS year,
+ EXTRACT(dow FROM order_date::TIMESTAMP) AS weekday FROM order_info
 """)
 
 order_table_transfer = ("""
-SELECT o.id , o.order_id , o.product_id, oi.customer_id, uniq_id, oi.city, oi."date" as order_date FROM order_line o 
+SELECT o.order_id , o.product_id, oi.customer_id, oi.uniq_id, c.city, o.quantity , o.unit_price, oi.order_date AS order_date FROM order_line o
     INNER JOIN (
-        SELECT id, customer_id, date, (
+        SELECT id, customer_id, order_date, (
             WITH temp as (
-                SELECT city, MIN(EXTRACT(EPOCH FROM (DATE_TRUNC('hour', oi."date" ::timestamp) - DATE_TRUNC('hour', date::timestamp)))) AS distance
+                SELECT uniq_id, MIN(EXTRACT(EPOCH FROM (DATE_TRUNC('hour', oi.order_date ::timestamp) - DATE_TRUNC('hour', date::timestamp)))) AS distance
                 FROM customer
-                WHERE  (id = oi.customer_id AND (EXTRACT(EPOCH FROM (DATE_TRUNC('hour', oi."date" ::timestamp) - DATE_TRUNC('hour', date::timestamp)))) >= 0)
-                group by city
-        )
-        SELECT uniq_id, city FROM temp  WHERE distance  = (SELECT MIN(distance) FROM temp)
-    ) FROM order_info oi
-)  oi on o.order_id = oi.id 
+                WHERE  (id = oi.customer_id AND (EXTRACT(EPOCH FROM (DATE_TRUNC('hour', oi.order_date ::timestamp) - DATE_TRUNC('hour', date::timestamp)))) >= 0)
+                GROUP BY uniq_id
+            )
+            SELECT uniq_id FROM temp  WHERE distance  = (SELECT MIN(distance) FROM temp)
+        )  FROM order_info oi
+    )  oi ON o.order_id = oi.id
+    INNER JOIN customer c ON c.uniq_id = oi.uniq_id  
 """)
 
 # QUERY LISTS
@@ -119,4 +130,3 @@ SELECT o.id , o.order_id , o.product_id, oi.customer_id, uniq_id, oi.city, oi."d
 create_table_queries = [product_table_create, customer_table_create, order_info_table_create, order_line_table_create]
 
 drop_table_queries = [product_table_drop, customer_table_drop, order_info_table_drop, order_line_table_drop]
-
