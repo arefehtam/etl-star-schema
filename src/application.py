@@ -3,6 +3,7 @@ from config_module import config
 from create_tables import main as create_tables
 from etl import main as etl
 from load_csv_files import main as load_csv_file
+from question import main as question
 from sql_queries.oltp import create_table_queries, drop_table_queries
 
 """
@@ -18,3 +19,4 @@ if __name__ == '__main__':
     create_tables(obj, "OLTP_DB", create_table_queries, drop_table_queries)
     load_csv_file()
     etl()
+    question()
